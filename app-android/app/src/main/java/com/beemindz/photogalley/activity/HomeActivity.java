@@ -1,9 +1,11 @@
-package com.beemindz.photogalley;
+package com.beemindz.photogalley.activity;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.beemindz.photogalley.R;
 
 
 public class HomeActivity extends ActionBarActivity {
@@ -11,7 +13,7 @@ public class HomeActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.ac_home);
     }
 
 

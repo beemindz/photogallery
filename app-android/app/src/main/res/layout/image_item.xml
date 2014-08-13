@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+    android:background="#eeeeee"
+    android:layout_marginBottom="10dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="2dp">
+    <com.beemindz.photogalley.util.SquareImageView
+        android:id="@+id/item_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop" />
+    <LinearLayout
+        android:layout_below="@+id/item_image_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:background="#eeeeee">
+        <ImageButton
+            android:id="@+id/image_item_img_btn_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/share"/>
+    </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>
