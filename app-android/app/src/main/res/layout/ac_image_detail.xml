@@ -21,7 +21,7 @@
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"/>
 
-    <SlidingDrawer
+     <SlidingDrawer
         android:id="@+id/ac_image_detail_sliding_drawer"
         android:layout_width="fill_parent"
         android:layout_height="250dip"
@@ -55,6 +55,6 @@
                 android:layout_toRightOf="@+id/ac_image_detail_save"
                 android:text="Cropper"/>
         </RelativeLayout>
-    </SlidingDrawer>
+     </SlidingDrawer>
 </RelativeLayout>
 
