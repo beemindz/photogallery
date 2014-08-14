@@ -70,7 +70,6 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
         .cacheInMemory(true)
         .cacheOnDisk(true)
         .considerExifParams(true)
-        .displayer(new RoundedBitmapDisplayer(0))
         .build();
   }
 

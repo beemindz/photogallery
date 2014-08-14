@@ -29,4 +29,11 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.2'
     // animal list view
     compile 'com.nhaarman.listviewanimations:library:2.6.0'
+    // croper image
+    compile 'com.edmodo:cropper:1.0.1'
+    // sliding up panel layout.
+    repositories {
+        mavenCentral()
+    }
+    compile 'com.sothree.slidinguppanel:library:+'
 }

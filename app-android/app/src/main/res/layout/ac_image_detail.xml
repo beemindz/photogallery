@@ -1,17 +1,60 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/ac_image_detail"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.beemindz.photogalley.activity.ImageDetailActivity">
 
-    <ImageView
+    <com.beemindz.photogalley.util.TouchImageView
         android:id="@+id/ac_image_detail_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/app_name"/>
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"/>
 
+    <SlidingDrawer
+        android:id="@+id/ac_image_detail_sliding_drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="250dip"
+        android:layout_alignParentBottom="true"
+        android:content="@+id/ac_image_detail_content"
+        android:handle="@+id/ac_image_detail_slide_button"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/ac_image_detail_slide_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bullet_arrow_up"/>
+
+        <RelativeLayout
+            android:id="@+id/ac_image_detail_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#eeeeee">
+
+            <Button
+                android:id="@+id/ac_image_detail_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"/>
+
+            <Button
+                android:id="@+id/ac_image_detail_cropper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/ac_image_detail_save"
+                android:text="Cropper"/>
+        </RelativeLayout>
+    </SlidingDrawer>
 </RelativeLayout>
+

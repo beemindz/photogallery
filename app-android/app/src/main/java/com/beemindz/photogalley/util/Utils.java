@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -103,4 +104,30 @@ public class Utils {
     return "";
   }
   // END
+
+  // BEGIN: TOAST UTILS
+  /**
+   * Displays a Toast notification for a short duration.
+   *
+   * @param context
+   *            activity screen.
+   * @param resId
+   *            '@string' id.
+   */
+  public static void toast(Context context, int resId) {
+    Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
+  }
+
+  /**
+   * Displays a Toast notification for a short duration.
+   *
+   * @param context
+   *            activity screen.
+   * @param message
+   *            message need show.
+   */
+  public static void toast(Context context, String message) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+  }
+  // END.
 }
