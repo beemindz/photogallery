@@ -25,6 +25,7 @@ import com.beemindz.photogalley.activity.ImageDetailActivity;
 import com.beemindz.photogalley.activity.fragment.dummy.DummyContent;
 import com.beemindz.photogalley.adapter.ImageAdapter;
 import com.beemindz.photogalley.util.Constants;
+import com.beemindz.photogalley.view.StaggeredGridView;
 import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -32,6 +33,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+
+import java.util.ArrayList;
 
 /**
  * A fragment representing a list of Items.
@@ -42,7 +45,7 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
  * Activities containing this fragment MUST implement
  * interface.
  */
-public class ListImageFragmentFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ListImageFragmentFragment extends Fragment implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
   ImageLoader imageLoader;
 
@@ -50,12 +53,14 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
    * The Adapter which will be used to populate the ListView/GridView with
    * Views.
    */
-  private BaseAdapter mAdapter;
+  //private BaseAdapter mAdapter;
+  private BaseAdapter adapter;
 
   /**
    * The fragment's ListView/GridView.
    */
   protected AbsListView mListView;
+  StaggeredGridView gridView;
 
   // TODO: Rename and change types of parameters
   public static ListImageFragmentFragment newInstance(String session) {
@@ -81,7 +86,8 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
 
     getActivity().overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     imageLoader = ImageLoader.getInstance();
-    mAdapter = new ImageAdapter(getActivity(), R.layout.image_item, DummyContent.ITEMS, imageLoader);
+    //mAdapter = new ImageAdapter(getActivity(), R.layout.image_item, DummyContent.ITEMS, imageLoader);
+    adapter = new ImageAdapter(getActivity(), R.layout.image_item, DummyContent.ITEMS, imageLoader);
   }
 
   @Override
@@ -108,13 +114,15 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
     // Set the adapter
     /*mListView = (AbsListView) view.findViewById(android.R.id.list);
     ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);*/
-    mListView = (AbsListView) view.findViewById(android.R.id.list);
-    mListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+    //mListView = (AbsListView) view.findViewById(android.R.id.list);
+    gridView = (StaggeredGridView) view.findViewById(R.id.grid);
+    //mListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
     //setBottomAdapter();
     setAlphaAdapter();
 
     // Set OnItemClickListener so we can be notified on item clicks
-    mListView.setOnItemClickListener(this);
+    //mListView.setOnItemClickListener(this);
+    gridView.setOnItemClickListener(this);
 
     return view;
   }
@@ -159,16 +167,40 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
 
   /*---Animation adapter---*/
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void setBottomAdapter() {
-    AnimationAdapter animAdapter = new SwingBottomInAnimationAdapter(mAdapter);
-    animAdapter.setAbsListView(mListView);
-    mListView.setAdapter(animAdapter);
+  private void setAlphaAdapter() {
+    AnimationAdapter animAdapter = new AlphaInAnimationAdapter(adapter);
+    animAdapter.setAbsListView(gridView);
+    //mListView.setAdapter(animAdapter);
+    gridView.setAdapter(adapter);
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void setAlphaAdapter() {
-    AnimationAdapter animAdapter = new AlphaInAnimationAdapter(mAdapter);
-    animAdapter.setAbsListView(mListView);
-    mListView.setAdapter(animAdapter);
+  private boolean mHasRequestedMore;
+  @Override
+  public void onScrollStateChanged(final AbsListView view, final int scrollState) {
+    Log.d(getClass().getName(), "onScrollStateChanged:" + scrollState);
+  }
+
+  @Override
+  public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+    Log.d(getClass().getName(), "onScroll firstVisibleItem:" + firstVisibleItem +
+        " visibleItemCount:" + visibleItemCount +
+        " totalItemCount:" + totalItemCount);
+    // our handling
+    if (!mHasRequestedMore) {
+      int lastInScreen = firstVisibleItem + visibleItemCount;
+      if (lastInScreen >= totalItemCount) {
+        Log.d(getClass().getName(), "onScroll lastInScreen - so load more");
+        mHasRequestedMore = true;
+        onLoadMoreItems();
+      }
+    }
+  }
+
+  private void onLoadMoreItems() {
+    // stash all the data in our backing store
+    setAlphaAdapter();
+    // notify the adapter that we can update now
+    adapter.notifyDataSetChanged();
+    mHasRequestedMore = false;
   }
 }

@@ -2,13 +2,21 @@
 <resources>
 
     <declare-styleable name="StaggeredGridView">
-
-        <!-- Number of columns displayed in StaggeredGridView -->
-        <attr name="columnCount" format="integer" />
-
-        <!-- Set mode for the StaggeredGridView. -->
-        <attr name="mode" format="string" />
-
+        <attr name="column_count" format="integer" />
+        <attr name="column_count_portrait" format="integer" />
+        <attr name="column_count_landscape" format="integer" />
+        <attr name="item_margin" format="dimension" />
+        <attr name="grid_paddingLeft" format="dimension" />
+        <attr name="grid_paddingRight" format="dimension" />
+        <attr name="grid_paddingTop" format="dimension" />
+        <attr name="grid_paddingBottom" format="dimension" />
     </declare-styleable>
-
+    <declare-styleable name="RoundedImageView">
+        <attr name="corner_radius" format="dimension" />
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="mutate_background" format="boolean" />
+        <attr name="oval" format="boolean" />
+        <attr name="android:scaleType" />
+    </declare-styleable>
 </resources>
