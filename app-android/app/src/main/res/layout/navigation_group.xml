@@ -27,7 +27,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#e9e9e9"/>
+        android:layout_height="3dp"
+        android:background="#d7d7d7"/>
 
 </RelativeLayout>

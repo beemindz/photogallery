@@ -37,9 +37,9 @@ public class DummyContent {
     addItem(new DummyItem("10", "http://chandai.tv/data/photos/17b34ec62a004b3994b41828911ff391/thumbnail-c4700e41974b40de8f728ef34cdd7bfe.jpg", "Item 10"));
     addItem(new DummyItem("11", "http://chandai.tv/data/photos/0338844ee1514b60a4894c4a8ab15605/thumbnail-c03509128914462185964e5fbff24a9e.jpg", "Item 11"));
     addItem(new DummyItem("12", "http://chandai.tv/data/photos/0b28eb0e395747df8ebc7b85b0f98b30/thumbnail-13713ddd41054591a26b3fce2eb5027d.jpg", "Item 12"));
-    for (int i = 13; i<= 100; i++) {
+    /*for (int i = 13; i<= 100; i++) {
       addItem(new DummyItem(""+i, "http://chandai.tv/data/photos/2628161f349f444bb8b6b0b66e80bee4/thumbnail-057b0326f982403980e50f117595ee5a.jpg", "Item " + i));
-    }
+    }*/
   }
 
   private static void addItem(DummyItem item) {

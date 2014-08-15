@@ -28,6 +28,7 @@ import com.beemindz.photogalley.util.Constants;
 import com.beemindz.photogalley.view.StaggeredGridView;
 import com.nhaarman.listviewanimations.swinginadapters.AnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.ScaleInAnimationAdapter;
 import com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -117,12 +118,11 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
     //mListView = (AbsListView) view.findViewById(android.R.id.list);
     gridView = (StaggeredGridView) view.findViewById(R.id.grid);
     //mListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-    //setBottomAdapter();
     setAlphaAdapter();
 
     // Set OnItemClickListener so we can be notified on item clicks
     //mListView.setOnItemClickListener(this);
-    gridView.setOnItemClickListener(this);
+    gridView.setOnScrollListener(this);
 
     return view;
   }
@@ -174,31 +174,45 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
     gridView.setAdapter(adapter);
   }
 
+  private void setScaleAdapter() {
+    AnimationAdapter animAdapter = new ScaleInAnimationAdapter(adapter);
+    animAdapter.setAbsListView(gridView);
+    gridView.setAdapter(animAdapter);
+  }
+
   private boolean mHasRequestedMore;
   @Override
   public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-    Log.d(getClass().getName(), "onScrollStateChanged:" + scrollState);
+    Log.d(getClass().getName(), "==onScrollStateChanged:" + scrollState);
   }
 
   @Override
   public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-    Log.d(getClass().getName(), "onScroll firstVisibleItem:" + firstVisibleItem +
+    Log.d(getClass().getName(), "==onScroll firstVisibleItem:" + firstVisibleItem +
         " visibleItemCount:" + visibleItemCount +
         " totalItemCount:" + totalItemCount);
     // our handling
     if (!mHasRequestedMore) {
       int lastInScreen = firstVisibleItem + visibleItemCount;
       if (lastInScreen >= totalItemCount) {
-        Log.d(getClass().getName(), "onScroll lastInScreen - so load more");
+        Log.d(getClass().getName(), "==onScroll lastInScreen - so load more");
         mHasRequestedMore = true;
-        onLoadMoreItems();
+        onLoadMoreItemsAlphaAdapter();
       }
     }
   }
 
-  private void onLoadMoreItems() {
+  private void onLoadMoreItemsAlphaAdapter() {
     // stash all the data in our backing store
     setAlphaAdapter();
+    // notify the adapter that we can update now
+    adapter.notifyDataSetChanged();
+    mHasRequestedMore = false;
+  }
+
+  private void onLoadMoreItemsScaleAdapter() {
+    // stash all the data in our backing store
+    setScaleAdapter();
     // notify the adapter that we can update now
     adapter.notifyDataSetChanged();
     mHasRequestedMore = false;

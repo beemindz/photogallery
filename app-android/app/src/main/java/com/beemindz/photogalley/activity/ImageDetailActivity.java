@@ -37,6 +37,9 @@ public class ImageDetailActivity extends ActionBarActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ac_image_detail);
     getSupportActionBar().hide();
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setDisplayShowHomeEnabled(true);
+    getSupportActionBar().setDisplayShowTitleEnabled(true);
 
     imageView = (TouchImageView) findViewById(R.id.ac_image_detail_image_view);
 
@@ -112,18 +115,23 @@ public class ImageDetailActivity extends ActionBarActivity {
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
-    if (id == R.id.detail_action_save) {
-      if (!TextUtils.isEmpty(uri)) {
-        String save = new Utils(this).file_download(uri, Constants.PATH_SAVE_IMAGE_DETAIL);
-        if (!TextUtils.isEmpty(save)) {
-          String msg = String.format("%s %s", getResources().getString(R.string.toast_msg_save_image_success), Constants.PATH_SAVE_IMAGE_DETAIL);
-          Utils.toast(this, msg);
-        } else {
-          Utils.toast(this, R.string.toast_msg_save_image_failed);
+    switch (id) {
+      case R.id.detail_action_save:
+        if (!TextUtils.isEmpty(uri)) {
+          String save = new Utils(this).file_download(uri, Constants.PATH_SAVE_IMAGE_DETAIL);
+          if (!TextUtils.isEmpty(save)) {
+            String msg = String.format("%s %s", getResources().getString(R.string.toast_msg_save_image_success), Constants.PATH_SAVE_IMAGE_DETAIL);
+            Utils.toast(this, msg);
+          } else {
+            Utils.toast(this, R.string.toast_msg_save_image_failed);
+          }
         }
-      }
-      return true;
+        break;
+      case android.R.id.home:
+        finish();
+        break;
     }
+
     return super.onOptionsItemSelected(item);
   }
 

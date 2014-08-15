@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.beemindz.photogalley.R;
@@ -24,11 +26,13 @@ import com.beemindz.photogalley.util.Constants;
 import com.beemindz.photogalley.util.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.File;
@@ -55,7 +59,10 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
   static class ViewHolder {
     ImageView image;
     ImageButton imgBtnShare;
-    ImageButton imgBtnComment;
+    ImageButton btnComment;
+    Button btnVoteUp;
+    Button btnVoteDown;
+    ProgressBar progressBar;
   }
 
   public ImageAdapter(Context context, int resource, List<DummyContent.DummyItem> items, ImageLoader imageLoader) {
@@ -67,38 +74,52 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
 
     this.imageLoader = imageLoader;
     options = new DisplayImageOptions.Builder()
-        .showImageOnLoading(R.drawable.ic_stub)
-        .showImageForEmptyUri(R.drawable.ic_empty)
-        .showImageOnFail(R.drawable.ic_error)
+        //.showImageOnLoading(R.drawable.ic_stub)
+        //.showImageForEmptyUri(R.drawable.ic_empty)
+        //.showImageOnFail(R.drawable.ic_error)
         .cacheInMemory(true)
         .cacheOnDisk(true)
         .considerExifParams(true)
+        .bitmapConfig(Bitmap.Config.RGB_565)
         .build();
   }
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     try {
+      final ViewHolder holder;
       DummyContent.DummyItem item = items.get(position);
       if (item != null) {
-        ViewHolder holder = new ViewHolder();
-        //if (convertView == null) {
+
+        if (convertView == null) {
           // get layout item.
           convertView = inflater.inflate(resource, null);
-
+          holder = new ViewHolder();
+          assert convertView != null;
           // findByViewId for property ViewHolder
           holder.image = (ImageView) convertView.findViewById(R.id.item_image_view);
           holder.imgBtnShare = (ImageButton) convertView.findViewById(R.id.image_item_img_btn_share);
+          holder.progressBar = (ProgressBar) convertView.findViewById(R.id.image_item_progressBar);
+          holder.btnComment = (ImageButton) convertView.findViewById(R.id.image_item_img_btn_comment);
+          holder.btnVoteDown = (Button) convertView.findViewById(R.id.image_item_img_btn_vote_down);
+          holder.btnVoteUp = (Button) convertView.findViewById(R.id.image_item_img_btn_vote_up);
 
           convertView.setTag(holder);
-        //} else {
-        //  convertView.getTag();
-        //}
+        } else {
+          holder = (ViewHolder)convertView.getTag();
+        }
 
         if (holder.image != null) {
           onImageShareListener(holder.imgBtnShare, item.url);
           // set async task ImageView by bitmap.
-          imageLoader.displayImage(item.getUrl(), holder.image, options, animateFirstListener);
+          animateFirstListener = new AnimateFirstDisplayListener(holder);
+          imageLoader.displayImage(item.getUrl(), holder.image, options, animateFirstListener, new ImageLoadingProgressListener() {
+            @Override
+            public void onProgressUpdate(String imageUri, View view, int current,
+                                         int total) {
+              holder.progressBar.setProgress(Math.round(100.0f * current / total));
+            }
+          });
 
           onImageListener(holder.image, position, item.url);
         }
@@ -149,13 +170,28 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
 
     public static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
-    @Override
-    public void onLoadingStarted(String imageUri, View view) {
-      super.onLoadingStarted(imageUri, view);
+    ViewHolder holder;
+    public AnimateFirstDisplayListener(){}
+    public AnimateFirstDisplayListener(ViewHolder holder) {
+      this.holder = holder;
     }
 
     @Override
+    public void onLoadingStarted(String imageUri, View view) {
+      holder.progressBar.setProgress(0);
+      holder.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onLoadingFailed(String imageUri, View view,
+                                FailReason failReason) {
+      holder.progressBar.setVisibility(View.GONE);
+    }
+
+
+    @Override
     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+      holder.progressBar.setVisibility(View.GONE);
       if (loadedImage != null) {
         ImageView imageView = (ImageView) view;
         boolean firstDisplay = !displayedImages.contains(imageUri);
@@ -164,6 +200,11 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
           displayedImages.add(imageUri);
         }
       }
+    }
+
+    @Override
+    public void onLoadingCancelled(String imageUri, View view) {
+      holder.progressBar.setVisibility(View.GONE);
     }
   }
 }
