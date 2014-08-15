@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,8 +129,8 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
     imageView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        String downloadImg = new Utils(context).file_download(url);
-        if (downloadImg != null) {
+        String downloadImg = new Utils(context).file_download(url, Constants.PATH_SAVE_IMAGE_SHARE);
+        if (!TextUtils.isEmpty(downloadImg)) {
           Toast.makeText(context, "Save image success", Toast.LENGTH_SHORT);
           File myFile = new File(downloadImg);
           Intent sendIntent = new Intent();
