@@ -14,4 +14,12 @@
     <string name="action_example">Example action</string>
     <string name="title_activity_image_detail">ImageDetailActivity</string>
 
+    <!--DETAIL IMAGE-->
+    <string name="detail_menu_save">Save</string>
+
+    <!--TOAST MESSAGE-->
+    <string name="toast_msg_save_image_success">Image downloading.</string>
+    <string name="toast_msg_save_image_failed">Save image failed.</string>
+
+
 </resources>

@@ -1,6 +1,11 @@
 package com.beemindz.photogalley.view;
 
 import android.content.Context;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 

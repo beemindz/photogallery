@@ -48,9 +48,9 @@ public class Utils {
   }
 
   // BEGIN:SHARE FUNCTION.
-  public String file_download(String uRl) {
+  public String file_download(String uRl, String pathSave) {
     File direct = new File(Environment.getExternalStorageDirectory()
-        + "/beemindz/slidePhoto");
+        + "/" + pathSave);
 
     if (!direct.exists()) {
       direct.mkdirs();
@@ -58,7 +58,7 @@ public class Utils {
 
     String nameImg = getFileNameFromUrl(uRl);
     DownloadManager mgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-    File imageExists = new File(String.format("%s/beemindz/slidePhoto/%s", Environment.getExternalStorageDirectory(), nameImg));
+    File imageExists = new File(String.format("%s/%s/%s", Environment.getExternalStorageDirectory(), pathSave, nameImg));
     if (!imageExists.exists()) {
       Uri downloadUri = Uri.parse(uRl);
       DownloadManager.Request request = new DownloadManager.Request(
@@ -67,13 +67,14 @@ public class Utils {
           DownloadManager.Request.NETWORK_WIFI
               | DownloadManager.Request.NETWORK_MOBILE)
           .setAllowedOverRoaming(false).setTitle(nameImg)
-          .setDescription("Download image to share to social network.")
-          .setDestinationInExternalPublicDir("/beemindz/slidePhoto", nameImg);
+          .setDescription("Download image.")
+          .setDestinationInExternalPublicDir("/" + pathSave, nameImg);
 
       mgr.enqueue(request);
     }
 
-    String path = String.format("%s/beemindz/slidePhoto/%s", Environment.getExternalStorageDirectory(), nameImg);
+    String path = String.format("%s/%s/%s", Environment.getExternalStorageDirectory(), pathSave, nameImg);
+
     Log.d("ImageAdapter", path);
     return path;
   }

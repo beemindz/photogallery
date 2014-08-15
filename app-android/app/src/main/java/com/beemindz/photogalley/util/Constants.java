@@ -12,4 +12,7 @@ public class Constants {
     public static final String IMAGES = "com.beemindz.photogalley.IMAGES";
     public static final String IMAGE_POSITION = "com.beemindz.photogalley.IMAGE_POSITION";
   }
+
+  public static final String PATH_SAVE_IMAGE_SHARE = "beemindz/slidePhoto";
+  public static final String PATH_SAVE_IMAGE_DETAIL = "beemindz/slidePhoto";
 }
