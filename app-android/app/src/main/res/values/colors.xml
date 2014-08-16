@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="list_item_pressed">#1A000000</color>
+    <color name="item_trans_background">#D9FFFFFF</color>
+  <color name="textColor">#595959</color>
 </resources>

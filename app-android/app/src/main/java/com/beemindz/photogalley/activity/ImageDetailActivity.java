@@ -1,14 +1,20 @@
 package com.beemindz.photogalley.activity;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
 
 import com.beemindz.photogalley.R;
@@ -25,6 +31,8 @@ public class ImageDetailActivity extends ActionBarActivity {
   DisplayImageOptions options;
   ImageLoader imageLoader;
   TouchImageView imageView;
+  WebView fbLikeWebView;
+  RelativeLayout fbLikeLayout;
   String uri;
 
   SlidingDrawer slidingDrawer;
@@ -42,6 +50,9 @@ public class ImageDetailActivity extends ActionBarActivity {
     getSupportActionBar().setDisplayShowTitleEnabled(true);
 
     imageView = (TouchImageView) findViewById(R.id.ac_image_detail_image_view);
+    fbLikeLayout = (RelativeLayout) findViewById(R.id.fb_like_layout);
+    fbLikeWebView = (WebView) findViewById(R.id.fb_like_webview);
+
 
     overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
@@ -49,6 +60,7 @@ public class ImageDetailActivity extends ActionBarActivity {
     assert bundle != null;
     final String imageUrl = bundle.getString(Constants.Extra.IMAGES);
     uri = imageUrl;
+
     int pagerPosition = bundle.getInt(Constants.Extra.IMAGE_POSITION, 0);
 
     imageLoader = ImageLoader.getInstance();
@@ -100,6 +112,9 @@ public class ImageDetailActivity extends ActionBarActivity {
       }
     });
     // END.
+
+    //Call fb Webview
+    setUpFbLikeWebView(imageUrl);
   }
 
   @Override
@@ -150,10 +165,52 @@ public class ImageDetailActivity extends ActionBarActivity {
       }
     });
   }
-  // END.
+  private void setUpFbLikeWebView(String imgUrl) {
 
-  // BEGIN: Cropper image
+    fbLikeWebView.setWebViewClient(new FaceBookClient());
+    fbLikeWebView.setWebChromeClient(new MyChromeClient());
+    final WebSettings webSettings = fbLikeWebView.getSettings();
+    webSettings.setJavaScriptEnabled(true);
+    webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+    webSettings.setSupportMultipleWindows(true);
+    fbLikeWebView.setBackgroundColor(0x00000000);
 
+    fbLikeWebView.loadUrl("http://mytodo.esy.es/fbLike.html?imgUrl="+imgUrl);
+//    holder.fbLikeWebView.loadUrl("http://192.168.1.77/fbLike.html?imgUrl="+imgUrl);
+//    fbLikeWebview.setLayoutParams(FILL);
+//    holder.fbLikeLayout.addView(holder.fbLikeWebView);
+  }
 
-  // END
+  final class MyChromeClient extends WebChromeClient {
+
+    // Add new webview in same window
+    @Override
+    public boolean onCreateWindow(WebView view, boolean dialog,
+                                  boolean userGesture, Message resultMsg) {
+      WebView childView = new WebView(ImageDetailActivity.this);
+      childView.getSettings().setJavaScriptEnabled(true);
+      childView.setWebChromeClient(this);
+      childView.setWebViewClient(new FaceBookClient());
+//      childView.setLayoutParams(FILL);
+      fbLikeLayout.addView(childView);
+      WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+      transport.setWebView(childView);
+      resultMsg.sendToTarget();
+      return true;
+    }
+
+    // remove new added webview whenever onCloseWindow gets called for new webview.
+    @Override
+    public void onCloseWindow(WebView window) {
+      fbLikeLayout.removeViewAt(fbLikeLayout.getChildCount() - 1);
+    }
+  }
+
+  private class FaceBookClient extends WebViewClient {
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+      Log.i("REQUEST URL", url);
+      return false;
+    }
+  }
 }
