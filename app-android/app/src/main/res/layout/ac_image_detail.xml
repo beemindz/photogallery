@@ -50,8 +50,16 @@
       android:id="@+id/fb_like_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-
       android:layout_gravity="bottom">
+
+      <WebView
+        android:id="@+id/fb_like_webview"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentRight="true">
+      </WebView>
+
 
       <LinearLayout
 
@@ -82,6 +90,7 @@
           android:textColor="#595959"/>
 
         <ImageButton
+          android:id="@+id/ac_image_detail_btn_comment"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:background="#00000000"
@@ -97,16 +106,6 @@
           android:src="@drawable/icon_share"/>
       </LinearLayout>
 
-        <WebView
-      android:id="@+id/fb_like_webview"
-      android:layout_width="wrap_content"
-      android:layout_height="35dp"
-      android:layout_weight="0.3"
-      android:layout_centerVertical="true"
-      android:layout_alignParentRight="true"
-      android:layout_alignParentEnd="true">
-
-    </WebView>
 
     </RelativeLayout>
 

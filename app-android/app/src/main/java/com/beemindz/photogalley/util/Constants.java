@@ -15,4 +15,9 @@ public class Constants {
 
   public static final String PATH_SAVE_IMAGE_SHARE = "beemindz/slidePhoto";
   public static final String PATH_SAVE_IMAGE_DETAIL = "beemindz/slidePhoto";
+
+  public static final String IMAGE_URL = "imageUrl";
+  public static final String URL_HOST = "http://mytodo.esy.es/";
+  public static final String URL_FB_LIKE = URL_HOST + "fbLike.html?imgUrl=";
+  public static final String URL_FB_COMMENT = URL_HOST + "fbComment.html?imgUrl=";
 }

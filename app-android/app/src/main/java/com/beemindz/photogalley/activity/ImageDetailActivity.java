@@ -1,5 +1,6 @@
 package com.beemindz.photogalley.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +14,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
@@ -24,19 +26,20 @@ import com.beemindz.photogalley.util.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-public class ImageDetailActivity extends ActionBarActivity {
+public class ImageDetailActivity extends ActionBarActivity implements View.OnClickListener {
 
   private String TAG = getClass().getName();
   private static final String STATE_POSITION = "STATE_POSITION";
   DisplayImageOptions options;
   ImageLoader imageLoader;
   TouchImageView imageView;
-  WebView fbLikeWebView;
+  WebView fbLikeWebView, childView;
   RelativeLayout fbLikeLayout;
   String uri;
 
   SlidingDrawer slidingDrawer;
-  Button slideButton, saveBtn, cropperBtn;
+  Button slideButton, btnSave, btnCropper;
+  ImageButton btnComment;
 
   boolean isShowBar = true;
 
@@ -44,15 +47,11 @@ public class ImageDetailActivity extends ActionBarActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ac_image_detail);
-    getSupportActionBar().hide();
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setDisplayShowHomeEnabled(true);
-    getSupportActionBar().setDisplayShowTitleEnabled(true);
+//    getSupportActionBar().hide();
 
     imageView = (TouchImageView) findViewById(R.id.ac_image_detail_image_view);
     fbLikeLayout = (RelativeLayout) findViewById(R.id.fb_like_layout);
     fbLikeWebView = (WebView) findViewById(R.id.fb_like_webview);
-
 
     overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
@@ -79,7 +78,6 @@ public class ImageDetailActivity extends ActionBarActivity {
 
     imageLoader.displayImage(imageUrl, imageView, options);
     imageView.setMaxZoom(4f);
-    onImageClick(imageView);
 
     // BEGIN: SlidingDrawer.
     slidingDrawer = (SlidingDrawer) findViewById(R.id.ac_image_detail_sliding_drawer);
@@ -99,20 +97,22 @@ public class ImageDetailActivity extends ActionBarActivity {
       }
     });
 
-    saveBtn = (Button) findViewById(R.id.ac_image_detail_save);
-    cropperBtn = (Button) findViewById(R.id.ac_image_detail_cropper);
-    cropperBtn.setOnClickListener(new View.OnClickListener() {
+    btnSave = (Button) findViewById(R.id.ac_image_detail_save);
+    btnCropper = (Button) findViewById(R.id.ac_image_detail_cropper);
+    btnCropper.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         try {
 
         } catch (Exception e) {
-          Log.d(TAG, "cropperBtn click " + e);
+          Log.d(TAG, "btnCropper click " + e);
         }
       }
     });
     // END.
 
+    btnComment = (ImageButton) findViewById(R.id.ac_image_detail_btn_comment);
+    btnComment.setOnClickListener(this);
     //Call fb Webview
     setUpFbLikeWebView(imageUrl);
   }
@@ -150,21 +150,6 @@ public class ImageDetailActivity extends ActionBarActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  // BEGIN: show/hide action when click imageview.
-  public void onImageClick(ImageView image) {
-    Log.d(TAG, "onImageClick");
-    image.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        if (isShowBar)
-          getSupportActionBar().hide();
-        else
-          getSupportActionBar().show();
-
-        isShowBar = !isShowBar;
-      }
-    });
-  }
   private void setUpFbLikeWebView(String imgUrl) {
 
     fbLikeWebView.setWebViewClient(new FaceBookClient());
@@ -175,10 +160,23 @@ public class ImageDetailActivity extends ActionBarActivity {
     webSettings.setSupportMultipleWindows(true);
     fbLikeWebView.setBackgroundColor(0x00000000);
 
-    fbLikeWebView.loadUrl("http://mytodo.esy.es/fbLike.html?imgUrl="+imgUrl);
+    fbLikeWebView.loadUrl(Constants.URL_FB_LIKE+imgUrl);
 //    holder.fbLikeWebView.loadUrl("http://192.168.1.77/fbLike.html?imgUrl="+imgUrl);
 //    fbLikeWebview.setLayoutParams(FILL);
 //    holder.fbLikeLayout.addView(holder.fbLikeWebView);
+  }
+
+  @Override
+  public void onClick(View view) {
+    switch (view.getId()) {
+      case R.id.ac_image_detail_btn_comment:
+        Intent intent = new Intent(ImageDetailActivity.this, FbCommentActivity.class);
+
+        intent.putExtra(Constants.IMAGE_URL, uri);
+        startActivity(intent);
+
+        break;
+    }
   }
 
   final class MyChromeClient extends WebChromeClient {
@@ -187,12 +185,16 @@ public class ImageDetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateWindow(WebView view, boolean dialog,
                                   boolean userGesture, Message resultMsg) {
-      WebView childView = new WebView(ImageDetailActivity.this);
+      childView = new WebView(ImageDetailActivity.this);
+
       childView.getSettings().setJavaScriptEnabled(true);
       childView.setWebChromeClient(this);
       childView.setWebViewClient(new FaceBookClient());
 //      childView.setLayoutParams(FILL);
       fbLikeLayout.addView(childView);
+      childView.requestFocus();
+      fbLikeWebView.setVisibility(View.GONE);
+
       WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
       transport.setWebView(childView);
       resultMsg.sendToTarget();
@@ -203,6 +205,9 @@ public class ImageDetailActivity extends ActionBarActivity {
     @Override
     public void onCloseWindow(WebView window) {
       fbLikeLayout.removeViewAt(fbLikeLayout.getChildCount() - 1);
+      childView =null;
+      fbLikeWebView.setVisibility(View.VISIBLE);
+      fbLikeWebView.requestFocus();
     }
   }
 
@@ -211,6 +216,18 @@ public class ImageDetailActivity extends ActionBarActivity {
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
       Log.i("REQUEST URL", url);
       return false;
+    }
+  }
+
+  @Override
+  public void onBackPressed() {
+    if(childView != null && fbLikeLayout.getChildCount()==2){
+      childView.stopLoading();
+      fbLikeLayout.removeViewAt(fbLikeLayout.getChildCount()-1);
+      if(fbLikeWebView.getVisibility() == View.GONE)
+        fbLikeWebView.setVisibility(View.VISIBLE);
+    }else{
+      super.onBackPressed();
     }
   }
 }

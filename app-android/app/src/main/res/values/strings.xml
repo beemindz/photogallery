@@ -13,6 +13,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="title_activity_image_detail">ImageDetailActivity</string>
+  <string name="title_activity_fb_comment">Comment</string>
 
     <!--DETAIL IMAGE-->
     <string name="detail_menu_save">Save</string>

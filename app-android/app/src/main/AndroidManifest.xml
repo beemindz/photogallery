@@ -25,6 +25,11 @@
             android:name=".activity.ImageDetailActivity"
             android:label="@string/title_activity_image_detail" >
         </activity>
+      <activity
+        android:name=".activity.FbCommentActivity"
+        android:label="@string/title_activity_fb_comment" >
+      </activity>
+
     </application>
 
 </manifest>
