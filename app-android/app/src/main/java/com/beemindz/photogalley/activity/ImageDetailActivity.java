@@ -1,6 +1,7 @@
 package com.beemindz.photogalley.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +22,7 @@ import android.widget.SlidingDrawer;
 
 import com.beemindz.photogalley.R;
 import com.beemindz.photogalley.util.Constants;
+import com.beemindz.photogalley.util.ShareUtils;
 import com.beemindz.photogalley.util.TouchImageView;
 import com.beemindz.photogalley.util.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -39,7 +41,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
 
   SlidingDrawer slidingDrawer;
   Button slideButton, btnSave, btnCropper;
-  ImageButton btnComment;
+  ImageButton btnComment, btnShare;
 
   boolean isShowBar = true;
 
@@ -52,6 +54,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     imageView = (TouchImageView) findViewById(R.id.ac_image_detail_image_view);
     fbLikeLayout = (RelativeLayout) findViewById(R.id.fb_like_layout);
     fbLikeWebView = (WebView) findViewById(R.id.fb_like_webview);
+    btnShare = (ImageButton) findViewById(R.id.ac_image_detail_btn_share);
 
     overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
@@ -64,12 +67,10 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
 
     imageLoader = ImageLoader.getInstance();
     options = new DisplayImageOptions.Builder()
-        .showImageOnLoading(R.drawable.ic_stub)
-        .showImageForEmptyUri(R.drawable.ic_empty)
-        .showImageOnFail(R.drawable.ic_error)
         .cacheInMemory(true)
         .cacheOnDisk(true)
         .considerExifParams(true)
+        .bitmapConfig(Bitmap.Config.RGB_565)
         .build();
 
     if (savedInstanceState != null) {
@@ -115,6 +116,8 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     btnComment.setOnClickListener(this);
     //Call fb Webview
     setUpFbLikeWebView(imageUrl);
+    // share
+    new ShareUtils(this).onImageShareListener(imageView, uri);
   }
 
   @Override

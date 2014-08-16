@@ -17,6 +17,7 @@
 
     <!--DETAIL IMAGE-->
     <string name="detail_menu_save">Save</string>
+    <string name="detail_menu_set_wallpaper">Set Wallpaper</string>
 
     <!--TOAST MESSAGE-->
     <string name="toast_msg_save_image_success">Image downloading.</string>

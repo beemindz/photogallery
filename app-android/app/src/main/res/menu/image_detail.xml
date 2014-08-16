@@ -12,4 +12,10 @@
         android:orderInCategory="1"
         android:title="@string/detail_menu_save"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/detail_action_set_wallpaper"
+        android:orderInCategory="2"
+        android:title="@string/detail_menu_set_wallpaper"
+        app:showAsAction="never"/>
 </menu>
