@@ -122,7 +122,7 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
 
     // Set OnItemClickListener so we can be notified on item clicks
     //mListView.setOnItemClickListener(this);
-    gridView.setOnScrollListener(this);
+    //gridView.setOnScrollListener(this);
 
     return view;
   }
@@ -197,7 +197,7 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
       if (lastInScreen >= totalItemCount) {
         Log.d(getClass().getName(), "==onScroll lastInScreen - so load more");
         mHasRequestedMore = true;
-        //onLoadMoreItemsAlphaAdapter();
+        onLoadMoreItemsAlphaAdapter();
         Log.d(getClass().getName(), "==onScroll lastInScreen lastInScreen >= totalItemCount==:" + lastInScreen);
       } else {
         Log.d(getClass().getName(), "==onScroll lastInScreen lastInScreen < totalItemCount==:" + lastInScreen);
