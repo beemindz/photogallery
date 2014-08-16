@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.webkit.WebChromeClient;
@@ -17,7 +18,7 @@ import android.widget.LinearLayout;
 
 import com.beemindz.photogalley.R;
 import com.beemindz.photogalley.util.Constants;
-
+import com.beemindz.photogalley.util.Utils;
 
 public class FbCommentActivity extends ActionBarActivity {
 
@@ -54,13 +55,29 @@ public class FbCommentActivity extends ActionBarActivity {
 
 //    parentLayout.addView(fbCommentWebView);
     fbCommentWebView.loadUrl(Constants.URL_FB_COMMENT + requestUrl);
-
+    getSupportActionBar().setDisplayShowHomeEnabled(true);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    int id = item.getItemId();
+    switch (id) {
+      case android.R.id.home:
+        finish();
+        break;
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
 
   private LinearLayout.LayoutParams getLayoutParams(){
     return new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
   }
-
 
   final class MyChromeClient extends WebChromeClient{
     @Override

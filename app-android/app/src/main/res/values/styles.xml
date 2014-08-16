@@ -7,7 +7,7 @@
 
       <!--<item name="actionMenuTextAppearance">@style/MyActionBar.MenuTextStyle</item>-->
       <item name="actionOverflowButtonStyle">@style/MyActionBar.OverFlow</item>
-      <item name="android:textColor">@color/textColor</item>
+      <item name="android:textColor">@color/text_color</item>
 
     </style>
 

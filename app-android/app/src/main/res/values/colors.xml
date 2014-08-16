@@ -2,5 +2,6 @@
 <resources>
     <color name="list_item_pressed">#1A000000</color>
     <color name="item_trans_background">#D9FFFFFF</color>
-  <color name="textColor">#595959</color>
+  <color name="text_color">#595959</color>
+  <color name="title_action_bar">#dc143c</color>
 </resources>

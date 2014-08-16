@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.beemindz.photogalley.R;
+import com.beemindz.photogalley.activity.FbCommentActivity;
 import com.beemindz.photogalley.activity.ImageDetailActivity;
 import com.beemindz.photogalley.activity.fragment.dummy.DummyContent;
 import com.beemindz.photogalley.util.Constants;
@@ -147,6 +148,38 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
       @Override
       public void onClick(View view) {
         startImagePagerActivity(position, url);
+      }
+    });
+  }
+
+  private void onBtnCommentClickListener(ImageButton button, final String imgUrl){
+    button.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent intent = new Intent(context, FbCommentActivity.class);
+        intent.putExtra(Constants.IMAGE_URL, imgUrl);
+        context.startActivity(intent);
+      }
+    });
+
+  }
+
+  private void onImageShareListener(ImageView imageView, final String url) {
+    imageView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        String downloadImg = new Utils(context).file_download(url, Constants.PATH_SAVE_IMAGE_SHARE);
+        if (!TextUtils.isEmpty(downloadImg)) {
+          Toast.makeText(context, "Save image success", Toast.LENGTH_SHORT);
+          File myFile = new File(downloadImg);
+          Intent sendIntent = new Intent();
+          sendIntent.setAction(Intent.ACTION_SEND);
+          sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(myFile));
+          sendIntent.setType(Utils.getMimeType(myFile.getPath()));
+          context.startActivity(sendIntent);
+        } else {
+          Toast.makeText(context, "Save image failed, not share", Toast.LENGTH_SHORT);
+        }
       }
     });
   }

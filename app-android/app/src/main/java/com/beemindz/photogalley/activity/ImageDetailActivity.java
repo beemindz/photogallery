@@ -47,7 +47,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.ac_image_detail);
-//    getSupportActionBar().hide();
+    getSupportActionBar().hide();
 
     imageView = (TouchImageView) findViewById(R.id.ac_image_detail_image_view);
     fbLikeLayout = (RelativeLayout) findViewById(R.id.fb_like_layout);
@@ -171,7 +171,6 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     switch (view.getId()) {
       case R.id.ac_image_detail_btn_comment:
         Intent intent = new Intent(ImageDetailActivity.this, FbCommentActivity.class);
-
         intent.putExtra(Constants.IMAGE_URL, uri);
         startActivity(intent);
 
