@@ -94,7 +94,7 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
   @Override
   public void onStart() {
     super.onStart();
-    getActivity().overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
+    getActivity().overridePendingTransition(0, R.anim.anim_out);
   }
 
   @Override
@@ -197,7 +197,7 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
       if (lastInScreen >= totalItemCount) {
         Log.d(getClass().getName(), "==onScroll lastInScreen - so load more");
         mHasRequestedMore = true;
-        onLoadMoreItemsAlphaAdapter();
+        //onLoadMoreItemsAlphaAdapter();
         Log.d(getClass().getName(), "==onScroll lastInScreen lastInScreen >= totalItemCount==:" + lastInScreen);
       } else {
         Log.d(getClass().getName(), "==onScroll lastInScreen lastInScreen < totalItemCount==:" + lastInScreen);

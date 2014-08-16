@@ -24,6 +24,7 @@ import com.beemindz.photogalley.R;
 import com.beemindz.photogalley.activity.ImageDetailActivity;
 import com.beemindz.photogalley.activity.fragment.dummy.DummyContent;
 import com.beemindz.photogalley.util.Constants;
+import com.beemindz.photogalley.util.ShareUtils;
 import com.beemindz.photogalley.util.Utils;
 import com.beemindz.photogalley.view.DynamicHeightImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -47,12 +48,12 @@ import java.util.List;
  */
 public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
 
-  List<DummyContent.DummyItem> items;
-  int resource;
-  Context context;
-  LayoutInflater inflater;
-  ImageLoader imageLoader;
-  DisplayImageOptions options;
+  private List<DummyContent.DummyItem> items;
+  private int resource;
+  private Context context;
+  private LayoutInflater inflater;
+  private ImageLoader imageLoader;
+  private DisplayImageOptions options;
   private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
   //initialize our progress dialog/bar
   private ProgressDialog mProgressDialog;
@@ -112,7 +113,7 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
         }
 
         if (holder.image != null) {
-          onImageShareListener(holder.imgBtnShare, item.url);
+          new ShareUtils(context).onImageShareListener(holder.imgBtnShare, item.url);
           // set async task ImageView by bitmap.
           animateFirstListener = new AnimateFirstDisplayListener(holder);
           imageLoader.displayImage(item.getUrl(), holder.image, options, animateFirstListener, new ImageLoadingProgressListener() {
@@ -146,26 +147,6 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
       @Override
       public void onClick(View view) {
         startImagePagerActivity(position, url);
-      }
-    });
-  }
-
-  private void onImageShareListener(ImageView imageView, final String url) {
-    imageView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        String downloadImg = new Utils(context).file_download(url, Constants.PATH_SAVE_IMAGE_SHARE);
-        if (!TextUtils.isEmpty(downloadImg)) {
-          Toast.makeText(context, "Save image success", Toast.LENGTH_SHORT);
-          File myFile = new File(downloadImg);
-          Intent sendIntent = new Intent();
-          sendIntent.setAction(Intent.ACTION_SEND);
-          sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(myFile));
-          sendIntent.setType(Utils.getMimeType(myFile.getPath()));
-          context.startActivity(sendIntent);
-        } else {
-          Toast.makeText(context, "Save image failed, not share", Toast.LENGTH_SHORT);
-        }
       }
     });
   }
