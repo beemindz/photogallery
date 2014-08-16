@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.beemindz.photogalley.activity.ImageDetailActivity;
 import com.beemindz.photogalley.activity.fragment.dummy.DummyContent;
 import com.beemindz.photogalley.util.Constants;
 import com.beemindz.photogalley.util.Utils;
+import com.beemindz.photogalley.view.DynamicHeightImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -57,7 +59,7 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
   public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
   static class ViewHolder {
-    ImageView image;
+    DynamicHeightImageView image;
     ImageButton imgBtnShare;
     ImageButton btnComment;
     Button btnVoteUp;
@@ -97,7 +99,7 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
           holder = new ViewHolder();
           assert convertView != null;
           // findByViewId for property ViewHolder
-          holder.image = (ImageView) convertView.findViewById(R.id.item_image_view);
+          holder.image = (DynamicHeightImageView) convertView.findViewById(R.id.item_image_view);
           holder.imgBtnShare = (ImageButton) convertView.findViewById(R.id.image_item_img_btn_share);
           holder.progressBar = (ProgressBar) convertView.findViewById(R.id.image_item_progressBar);
           holder.btnComment = (ImageButton) convertView.findViewById(R.id.image_item_img_btn_comment);
@@ -120,6 +122,8 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
               holder.progressBar.setProgress(Math.round(100.0f * current / total));
             }
           });
+
+          holder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
           onImageListener(holder.image, position, item.url);
         }

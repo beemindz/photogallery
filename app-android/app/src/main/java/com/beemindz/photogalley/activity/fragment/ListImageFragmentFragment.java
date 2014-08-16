@@ -198,6 +198,9 @@ public class ListImageFragmentFragment extends Fragment implements AdapterView.O
         Log.d(getClass().getName(), "==onScroll lastInScreen - so load more");
         mHasRequestedMore = true;
         onLoadMoreItemsAlphaAdapter();
+        Log.d(getClass().getName(), "==onScroll lastInScreen lastInScreen >= totalItemCount==:" + lastInScreen);
+      } else {
+        Log.d(getClass().getName(), "==onScroll lastInScreen lastInScreen < totalItemCount==:" + lastInScreen);
       }
     }
   }
