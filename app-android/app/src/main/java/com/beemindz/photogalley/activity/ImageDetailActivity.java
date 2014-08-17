@@ -1,12 +1,15 @@
 package com.beemindz.photogalley.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,17 +20,15 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
-import android.widget.SlidingDrawer;
 
 import com.beemindz.photogalley.R;
 import com.beemindz.photogalley.util.Constants;
 import com.beemindz.photogalley.util.ShareUtils;
 import com.beemindz.photogalley.util.TouchImageView;
+import com.beemindz.photogalley.util.TypeInput;
 import com.beemindz.photogalley.util.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -43,7 +44,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
   RelativeLayout fbLikeLayout;
   String uri;
 
-  ImageButton btnComment, btnShare;
+  ImageButton btnComment, btnShare, btnPopupMenu;
 
   ViewGroup viewGroup;
 
@@ -59,6 +60,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     fbLikeLayout = (RelativeLayout) findViewById(R.id.fb_like_layout);
     fbLikeWebView = (WebView) findViewById(R.id.fb_like_webview);
     btnShare = (ImageButton) findViewById(R.id.ac_image_detail_btn_share);
+    btnPopupMenu = (ImageButton) findViewById(R.id.ac_image_detail_popup_menu);
 
     overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
@@ -115,6 +117,9 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     setUpFbLikeWebView(imageUrl);
     // share
     new ShareUtils(this).onImageShareListener(btnShare, uri);
+
+    // context menu or popup menu
+    setMenu();
   }
 
   @Override
@@ -160,7 +165,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     webSettings.setSupportMultipleWindows(true);
     fbLikeWebView.setBackgroundColor(0x00000000);
 
-    fbLikeWebView.loadUrl(Constants.URL_FB_LIKE+imgUrl);
+    fbLikeWebView.loadUrl(Constants.URL_FB_LIKE + imgUrl);
 //    holder.fbLikeWebView.loadUrl("http://192.168.1.77/fbLike.html?imgUrl="+imgUrl);
 //    fbLikeWebview.setLayoutParams(FILL);
 //    holder.fbLikeLayout.addView(holder.fbLikeWebView);
@@ -204,7 +209,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     @Override
     public void onCloseWindow(WebView window) {
       fbLikeLayout.removeViewAt(fbLikeLayout.getChildCount() - 1);
-      childView =null;
+      childView = null;
       fbLikeWebView.setVisibility(View.VISIBLE);
       fbLikeWebView.requestFocus();
     }
@@ -220,13 +225,84 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
 
   @Override
   public void onBackPressed() {
-    if(childView != null && fbLikeLayout.getChildCount()==2){
+    if (childView != null && fbLikeLayout.getChildCount() == 2) {
       childView.stopLoading();
-      fbLikeLayout.removeViewAt(fbLikeLayout.getChildCount()-1);
-      if(fbLikeWebView.getVisibility() == View.GONE)
+      fbLikeLayout.removeViewAt(fbLikeLayout.getChildCount() - 1);
+      if (fbLikeWebView.getVisibility() == View.GONE)
         fbLikeWebView.setVisibility(View.VISIBLE);
-    }else{
+    } else {
       super.onBackPressed();
     }
   }
+
+  // BEGIN: CONTEXT MENU
+
+  private void setMenu() {
+    if (Build.VERSION.SDK_INT > 10) {
+      initPopupMenu();
+    } else {
+      registerForContextMenu(btnPopupMenu);
+    }
+  }
+
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    getMenuInflater().inflate(R.menu.popup_menu_ac_detail, menu);
+    super.onCreateContextMenu(menu, v, menuInfo);
+  }
+
+  @Override
+  public boolean onContextItemSelected(MenuItem item) {
+    return onPopupMenuItemClick(item);
+  }
+  // END:
+
+  // BEGIN:POPUP MENU API 11 ->
+  @SuppressLint("NewApi")
+  private void initPopupMenu() {
+    btnPopupMenu.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        PopupMenu popupMenu = new PopupMenu(ImageDetailActivity.this, view);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+          @Override
+          public boolean onMenuItemClick(MenuItem menuItem) {
+            return onPopupMenuItemClick(menuItem);
+          }
+        });
+
+        popupMenu.inflate(R.menu.popup_menu_ac_detail);
+        popupMenu.show();
+      }
+    });
+  }
+
+  public boolean onPopupMenuItemClick(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.popup_menu_ac_detail_save:
+        if (!TextUtils.isEmpty(uri)) {
+          String save = new Utils(this).file_download(uri, Constants.PATH_SAVE_IMAGE_DETAIL);
+          if (!TextUtils.isEmpty(save)) {
+            String msg = String.format("%s %s", getResources().getString(R.string.toast_msg_save_image_success), Constants.PATH_SAVE_IMAGE_DETAIL);
+            Utils.toast(this, msg);
+          } else {
+            Utils.toast(this, R.string.toast_msg_save_image_failed);
+          }
+        }
+        return true;
+      case R.id.popup_menu_ac_detail_set_wallpaper:
+        try {
+          Bitmap bitmap = imageLoader.loadImageSync(uri, options);
+          new ShareUtils(this).setWallpaper(TypeInput.BITMAP, bitmap, 0);
+          return true;
+        } catch (Exception e) {
+          e.printStackTrace();
+          Log.e(getClass().getName(), "setWallpaper error: " + e);
+          return false;
+        }
+      default:
+        return false;
+    }
+  }
+  // END.
 }

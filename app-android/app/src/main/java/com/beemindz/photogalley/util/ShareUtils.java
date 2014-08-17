@@ -44,8 +44,7 @@ public class ShareUtils {
     });
   }
 
-  public void setWallpaper(TypeInput typeInput, Bitmap bitmap, int resId) {
-    try {
+  public void setWallpaper(TypeInput typeInput, Bitmap bitmap, int resId) throws Exception {
       WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
       if (typeInput == TypeInput.BITMAP) {
         wallpaperManager.setBitmap(bitmap);
@@ -54,15 +53,6 @@ public class ShareUtils {
       } else if (typeInput == TypeInput.URI) {
         //TODO
       }
-    } catch (Exception e) {
-      e.printStackTrace();
-      Log.e(getClass().getName(), "setWallpaper error: " + e);
-    }
   }
 }
 
-enum TypeInput {
-  BITMAP,
-  RESOURCE,
-  URI,
-}

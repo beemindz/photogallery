@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/popup_menu_ac_detail_save"
+        android:title="Save"
+        android:visible="true"/>
+    <item
+        android:id="@+id/popup_menu_ac_detail_set_wallpaper"
+        android:title="Set Wallpaper"
+        android:visible="true"/>
+
+</menu>
