@@ -28,6 +28,8 @@ import com.beemindz.photogalley.util.Constants;
 import com.beemindz.photogalley.util.ShareUtils;
 import com.beemindz.photogalley.util.Utils;
 import com.beemindz.photogalley.view.DynamicHeightImageView;
+import com.beemindz.photogalley.view.ExtendableListView;
+import com.beemindz.photogalley.view.StaggeredGridView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -116,7 +118,7 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
         if (holder.image != null) {
           new ShareUtils(context).onImageShareListener(holder.imgBtnShare, item.url);
           // set async task ImageView by bitmap.
-          animateFirstListener = new AnimateFirstDisplayListener(holder);
+          animateFirstListener = new AnimateFirstDisplayListener(holder.progressBar);
           imageLoader.displayImage(item.getUrl(), holder.image, options, animateFirstListener, new ImageLoadingProgressListener() {
             @Override
             public void onProgressUpdate(String imageUri, View view, int current,
@@ -125,6 +127,7 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
             }
           });
 
+          holder.image.setAdjustViewBounds(false);
           holder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
           onImageListener(holder.image, position, item.url);
@@ -170,28 +173,28 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
 
     public static final List<String> displayedImages = Collections.synchronizedList(new LinkedList<String>());
 
-    ViewHolder holder;
+    ProgressBar progressBar;
     public AnimateFirstDisplayListener(){}
-    public AnimateFirstDisplayListener(ViewHolder holder) {
-      this.holder = holder;
+    public AnimateFirstDisplayListener(ProgressBar progressBar) {
+      this.progressBar = progressBar;
     }
 
     @Override
     public void onLoadingStarted(String imageUri, View view) {
-      holder.progressBar.setProgress(0);
-      holder.progressBar.setVisibility(View.VISIBLE);
+      progressBar.setProgress(0);
+      progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onLoadingFailed(String imageUri, View view,
                                 FailReason failReason) {
-      holder.progressBar.setVisibility(View.GONE);
+      progressBar.setVisibility(View.GONE);
     }
 
 
     @Override
     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-      holder.progressBar.setVisibility(View.GONE);
+      progressBar.setVisibility(View.GONE);
       if (loadedImage != null) {
         ImageView imageView = (ImageView) view;
         boolean firstDisplay = !displayedImages.contains(imageUri);
@@ -204,7 +207,7 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
 
     @Override
     public void onLoadingCancelled(String imageUri, View view) {
-      holder.progressBar.setVisibility(View.GONE);
+      progressBar.setVisibility(View.GONE);
     }
   }
 }

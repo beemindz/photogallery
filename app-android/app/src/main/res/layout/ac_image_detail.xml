@@ -10,6 +10,14 @@
     android:orientation="vertical"
     tools:context="com.beemindz.photogalley.activity.ImageDetailActivity">
 
+    <ProgressBar
+        android:id="@+id/ac_image_detail_progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
     <com.beemindz.photogalley.util.TouchImageView
         android:id="@+id/ac_image_detail_image_view"

@@ -1,15 +1,16 @@
 package com.beemindz.photogalley.util;
 
+import android.app.Activity;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -45,14 +46,22 @@ public class ShareUtils {
   }
 
   public void setWallpaper(TypeInput typeInput, Bitmap bitmap, int resId) throws Exception {
-      WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-      if (typeInput == TypeInput.BITMAP) {
-        wallpaperManager.setBitmap(bitmap);
-      } else if (typeInput == TypeInput.RESOURCE) {
-        wallpaperManager.setResource(resId);
-      } else if (typeInput == TypeInput.URI) {
-        //TODO
-      }
+    WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+    if (typeInput == TypeInput.BITMAP) {
+      DisplayMetrics metrics = new DisplayMetrics();
+      ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+      int height = metrics.heightPixels;
+      int width = metrics.widthPixels;
+      Log.d(getClass().getName(), "metrics.heightPixels:" + height + "- metrics.widthPixels:" + width);
+      Bitmap bmp = Bitmap.createScaledBitmap(bitmap, width, height, true);
+      wallpaperManager.setWallpaperOffsetSteps(1, 1);
+      wallpaperManager.suggestDesiredDimensions(width, height);
+      wallpaperManager.setBitmap(bmp);
+    } else if (typeInput == TypeInput.RESOURCE) {
+      wallpaperManager.setResource(resId);
+    } else if (typeInput == TypeInput.URI) {
+      //TODO
+    }
   }
 }
 

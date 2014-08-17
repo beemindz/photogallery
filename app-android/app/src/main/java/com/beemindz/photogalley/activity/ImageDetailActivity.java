@@ -22,9 +22,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.beemindz.photogalley.R;
+import com.beemindz.photogalley.adapter.ImageAdapter;
 import com.beemindz.photogalley.util.Constants;
 import com.beemindz.photogalley.util.ShareUtils;
 import com.beemindz.photogalley.util.TouchImageView;
@@ -40,6 +42,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
   DisplayImageOptions options;
   ImageLoader imageLoader;
   TouchImageView imageView;
+  ProgressBar progressBar;
   WebView fbLikeWebView, childView;
   RelativeLayout fbLikeLayout;
   String uri;
@@ -83,7 +86,10 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
       pagerPosition = savedInstanceState.getInt(STATE_POSITION);
     }
 
-    imageLoader.displayImage(imageUrl, imageView, options);
+    progressBar = (ProgressBar) findViewById(R.id.ac_image_detail_progressBar);
+    ImageAdapter.AnimateFirstDisplayListener animateFirstDisplayListener = new ImageAdapter.AnimateFirstDisplayListener(progressBar);
+
+    imageLoader.displayImage(imageUrl, imageView, options, animateFirstDisplayListener);
     imageView.setMaxZoom(4f);
 
     // BEGIN: SlidingDrawer.
