@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -17,6 +20,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
 
@@ -39,9 +43,9 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
   RelativeLayout fbLikeLayout;
   String uri;
 
-  SlidingDrawer slidingDrawer;
-  Button slideButton, btnSave, btnCropper;
   ImageButton btnComment, btnShare;
+
+  ViewGroup viewGroup;
 
   boolean isShowBar = true;
 
@@ -81,33 +85,26 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     imageView.setMaxZoom(4f);
 
     // BEGIN: SlidingDrawer.
-    slidingDrawer = (SlidingDrawer) findViewById(R.id.ac_image_detail_sliding_drawer);
-    slideButton = (Button) findViewById(R.id.ac_image_detail_slide_button);
+    viewGroup = (ViewGroup) findViewById(R.id.ac_image_detail_view_group);
+    isShowBar = true;
+    final Animation bottomUp = AnimationUtils.loadAnimation(this,
+        R.anim.bottom_up);
 
-    slidingDrawer.setOnDrawerOpenListener(new SlidingDrawer.OnDrawerOpenListener() {
-      @Override
-      public void onDrawerOpened() {
-        slideButton.setBackgroundResource(R.drawable.bullet_arrow_down);
-      }
-    });
+    final Animation bottomDown = AnimationUtils.loadAnimation(this,
+        R.anim.bottom_down);
 
-    slidingDrawer.setOnDrawerCloseListener(new SlidingDrawer.OnDrawerCloseListener() {
-      @Override
-      public void onDrawerClosed() {
-        slideButton.setBackgroundResource(R.drawable.bullet_arrow_up);
-      }
-    });
-
-    btnSave = (Button) findViewById(R.id.ac_image_detail_save);
-    btnCropper = (Button) findViewById(R.id.ac_image_detail_cropper);
-    btnCropper.setOnClickListener(new View.OnClickListener() {
+    imageView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        try {
-
-        } catch (Exception e) {
-          Log.d(TAG, "btnCropper click " + e);
+        if (!isShowBar) {
+          viewGroup.setVisibility(View.VISIBLE);
+          viewGroup.startAnimation(bottomUp);
+        } else {
+          viewGroup.startAnimation(bottomDown);
+          viewGroup.setVisibility(View.GONE);
         }
+
+        isShowBar = !isShowBar;
       }
     });
     // END.
@@ -117,7 +114,7 @@ public class ImageDetailActivity extends ActionBarActivity implements View.OnCli
     //Call fb Webview
     setUpFbLikeWebView(imageUrl);
     // share
-    new ShareUtils(this).onImageShareListener(imageView, uri);
+    new ShareUtils(this).onImageShareListener(btnShare, uri);
   }
 
   @Override

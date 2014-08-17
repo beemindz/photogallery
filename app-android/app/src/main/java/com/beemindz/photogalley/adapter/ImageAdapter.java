@@ -128,6 +128,8 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
           holder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
           onImageListener(holder.image, position, item.url);
+          onBtnCommentClickListener(holder.btnComment, item.url);
+          new ShareUtils(context).onImageShareListener(holder.imgBtnShare, item.url);
         }
       }
       return convertView;
@@ -162,26 +164,6 @@ public class ImageAdapter extends ArrayAdapter<DummyContent.DummyItem> {
       }
     });
 
-  }
-
-  private void onImageShareListener(ImageView imageView, final String url) {
-    imageView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        String downloadImg = new Utils(context).file_download(url, Constants.PATH_SAVE_IMAGE_SHARE);
-        if (!TextUtils.isEmpty(downloadImg)) {
-          Toast.makeText(context, "Save image success", Toast.LENGTH_SHORT);
-          File myFile = new File(downloadImg);
-          Intent sendIntent = new Intent();
-          sendIntent.setAction(Intent.ACTION_SEND);
-          sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(myFile));
-          sendIntent.setType(Utils.getMimeType(myFile.getPath()));
-          context.startActivity(sendIntent);
-        } else {
-          Toast.makeText(context, "Save image failed, not share", Toast.LENGTH_SHORT);
-        }
-      }
-    });
   }
 
   public static class AnimateFirstDisplayListener extends SimpleImageLoadingListener {

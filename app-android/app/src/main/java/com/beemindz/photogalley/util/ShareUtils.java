@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ public class ShareUtils {
     this.context = context;
   }
 
-  public void onImageShareListener(ImageView imageView, final String url) {
+  public void onImageShareListener(ImageButton imageView, final String url) {
     imageView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
